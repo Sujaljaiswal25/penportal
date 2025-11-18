@@ -13,6 +13,7 @@ const articleRoutes = require("./routes/article.routes");
 const commentRoutes = require("./routes/comment.routes");
 const notificationRoutes = require("./routes/notification.routes");
 const searchRoutes = require("./routes/search.routes");
+const chatbotRoutes = require("./routes/chatbot.routes");
 
 // Security Middleware
 app.use(helmet());
@@ -55,6 +56,7 @@ app.use("/api/articles", articleRoutes);
 app.use("/api/comments", commentRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/search", searchRoutes);
+app.use("/api/chat", chatbotRoutes);
 
 // 404 Handler
 app.use((req, res) => {

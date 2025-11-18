@@ -5,6 +5,7 @@ import { NotificationProvider } from "./context/NotificationContext";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import ProtectedRoute from "./components/ProtectedRoute";
+import ChatBot from "./components/ChatBot";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -66,6 +67,7 @@ const App = () => {
               </Routes>
             </main>
             <Footer />
+            <ChatBot />
           </div>
           <Toaster position="top-right" />
         </NotificationProvider>

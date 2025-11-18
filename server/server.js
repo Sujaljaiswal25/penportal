@@ -3,6 +3,7 @@ const app = require("./src/app");
 const connectDB = require("./src/db/db");
 const http = require("http");
 const { Server } = require("socket.io");
+const { streamMessage } = require("./src/controllers/chatbot.controller");
 
 // Create HTTP server
 const server = http.createServer(app);
@@ -35,6 +36,47 @@ io.on("connection", (socket) => {
   // Leave article room
   socket.on("leaveArticle", (articleId) => {
     socket.leave(`article-${articleId}`);
+  });
+
+  // Chatbot: Handle user messages with streaming response
+  socket.on("user_message", async (data) => {
+    try {
+      const { message, conversationHistory } = data;
+      console.log("Received chatbot message:", message);
+
+      // Emit acknowledgment
+      socket.emit("bot_typing", true);
+
+      // Stream the response
+      const stream = await streamMessage(message, conversationHistory);
+      let fullResponse = "";
+
+      for await (const chunk of stream) {
+        const chunkText = chunk.text();
+        fullResponse += chunkText;
+
+        // Send each chunk to the client
+        socket.emit("bot_response_chunk", {
+          chunk: chunkText,
+          isComplete: false,
+        });
+      }
+
+      // Send final complete message
+      socket.emit("bot_response_chunk", {
+        chunk: "",
+        isComplete: true,
+        fullMessage: fullResponse,
+      });
+
+      socket.emit("bot_typing", false);
+    } catch (error) {
+      console.error("Chatbot error:", error);
+      socket.emit("bot_error", {
+        message: "Sorry, I encountered an error. Please try again.",
+      });
+      socket.emit("bot_typing", false);
+    }
   });
 
   socket.on("disconnect", () => {

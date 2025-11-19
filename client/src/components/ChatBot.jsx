@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import ReactMarkdown from "react-markdown";
+import { motion, AnimatePresence } from "framer-motion";
+import { Bot, X, Send, Sparkles, Minimize2 } from "lucide-react";
 import socket from "../utils/socket";
 
 const ChatBot = () => {
@@ -174,232 +176,260 @@ const ChatBot = () => {
   return (
     <>
       {/* Chatbot Toggle Button */}
-      <button
+      <motion.button
         onClick={toggleChat}
-        className="fixed bottom-6 right-6 z-50 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full p-4 shadow-2xl hover:shadow-3xl hover:scale-110 transition-all duration-300 group"
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.95 }}
+        className="fixed bottom-6 right-6 z-50 bg-linear-to-br from-indigo-600 via-purple-600 to-pink-600 text-white rounded-full p-4 shadow-2xl hover:shadow-purple-500/50 transition-shadow duration-300 group"
         aria-label="Toggle chatbot"
       >
-        {isOpen ? (
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
-        ) : (
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
-            />
-          </svg>
-        )}
+        <AnimatePresence mode="wait">
+          {isOpen ? (
+            <motion.div
+              key="close"
+              initial={{ rotate: -90, opacity: 0 }}
+              animate={{ rotate: 0, opacity: 1 }}
+              exit={{ rotate: 90, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+            >
+              <X className="w-6 h-6" />
+            </motion.div>
+          ) : (
+            <motion.div
+              key="bot"
+              initial={{ rotate: 90, opacity: 0 }}
+              animate={{ rotate: 0, opacity: 1 }}
+              exit={{ rotate: -90, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="relative"
+            >
+              <Bot className="w-6 h-6" />
+              <motion.div
+                animate={{ scale: [1, 1.2, 1] }}
+                transition={{ duration: 2, repeat: Infinity }}
+                className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full border-2 border-white"
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
         {!isConnected && isOpen && (
-          <span className="absolute top-0 right-0 h-3 w-3 bg-red-500 rounded-full animate-pulse"></span>
+          <motion.span
+            animate={{ scale: [1, 1.2, 1] }}
+            transition={{ duration: 1, repeat: Infinity }}
+            className="absolute top-0 right-0 h-3 w-3 bg-red-500 rounded-full"
+          />
         )}
-      </button>
+      </motion.button>
 
       {/* Chatbot Window */}
-      {isOpen && (
-        <div className="fixed bottom-24 right-6 z-50 w-96 h-[600px] bg-white dark:bg-gray-800 rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-gray-200 dark:border-gray-700 transition-all duration-300 animate-slideUp">
-          {/* Header */}
-          <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-4 flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="relative">
-                <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-6 text-blue-600"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                    />
-                  </svg>
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: 20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.95 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+            className="fixed bottom-24 right-6 z-50 w-full max-w-md sm:w-96 h-[600px] bg-white/95 backdrop-blur-xl dark:bg-gray-900/95 rounded-3xl shadow-2xl flex flex-col overflow-hidden border border-gray-200/50 dark:border-gray-700/50"
+          >
+            {/* Header */}
+            <div className="relative bg-linear-to-br from-indigo-600 via-purple-600 to-pink-600 text-white p-5 flex items-center justify-between overflow-hidden">
+              <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLW9wYWNpdHk9IjAuMDUiIHN0cm9rZS13aWR0aD0iMSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmlkKSIvPjwvc3ZnPg==')] opacity-30"></div>
+              <div className="flex items-center space-x-3 relative z-10">
+                <motion.div
+                  animate={{ rotate: [0, 5, -5, 0] }}
+                  transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
+                  className="relative"
+                >
+                  <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center border border-white/30">
+                    <Bot className="w-6 h-6 text-white" />
+                  </div>
+                  {isConnected && (
+                    <motion.span
+                      animate={{ scale: [1, 1.2, 1] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                      className="absolute -bottom-1 -right-1 h-4 w-4 bg-green-400 rounded-full border-2 border-white flex items-center justify-center"
+                    >
+                      <span className="w-2 h-2 bg-green-600 rounded-full"></span>
+                    </motion.span>
+                  )}
+                </motion.div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-extrabold text-lg">AI Assistant</h3>
+                    <Sparkles className="w-4 h-4 animate-pulse" />
+                  </div>
+                  <p className="text-xs font-medium opacity-90">
+                    {isConnected ? "Ready to help you" : "Connecting..."}
+                  </p>
                 </div>
-                {isConnected && (
-                  <span className="absolute bottom-0 right-0 h-3 w-3 bg-green-400 rounded-full border-2 border-white"></span>
-                )}
               </div>
-              <div>
-                <h3 className="font-semibold text-lg">AI Assistant</h3>
-                <p className="text-xs opacity-90">
-                  {isConnected ? "Online" : "Connecting..."}
-                </p>
-              </div>
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={toggleChat}
+                className="hover:bg-white/20 rounded-xl p-2 transition-colors relative z-10"
+              >
+                <Minimize2 className="w-5 h-5" />
+              </motion.button>
             </div>
-            <button
-              onClick={toggleChat}
-              className="hover:bg-white/20 rounded-lg p-2 transition-colors"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M19 9l-7 7-7-7"
-                />
-              </svg>
-            </button>
-          </div>
 
-          {/* Messages Container */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50 dark:bg-gray-900">
-            {messages.map((message, index) => (
-              <div
-                key={index}
-                className={`flex ${
-                  message.role === "user" ? "justify-end" : "justify-start"
-                }`}
-              >
-                <div
-                  className={`max-w-[80%] rounded-2xl px-4 py-2 ${
-                    message.role === "user"
-                      ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-br-none"
-                      : message.isError
-                      ? "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300 rounded-bl-none"
-                      : "bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-bl-none shadow-md"
+            {/* Messages Container */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-linear-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
+              {messages.map((message, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: index * 0.05 }}
+                  className={`flex ${
+                    message.role === "user" ? "justify-end" : "justify-start"
                   }`}
                 >
-                  {message.role === "user" ? (
-                    <p className="text-sm whitespace-pre-wrap break-words">
-                      {message.content}
-                    </p>
-                  ) : (
-                    <div className="text-sm prose prose-sm dark:prose-invert max-w-none">
-                      <ReactMarkdown
-                        components={{
-                          p: ({ children }) => (
-                            <p className="mb-2 last:mb-0">{children}</p>
-                          ),
-                          code: ({ inline, children }) =>
-                            inline ? (
-                              <code className="bg-gray-200 dark:bg-gray-700 px-1 py-0.5 rounded text-xs">
-                                {children}
-                              </code>
-                            ) : (
-                              <code className="block bg-gray-100 dark:bg-gray-900 p-2 rounded text-xs overflow-x-auto">
-                                {children}
-                              </code>
-                            ),
-                          ul: ({ children }) => (
-                            <ul className="list-disc ml-4 mb-2">{children}</ul>
-                          ),
-                          ol: ({ children }) => (
-                            <ol className="list-decimal ml-4 mb-2">
-                              {children}
-                            </ol>
-                          ),
-                          li: ({ children }) => (
-                            <li className="mb-1">{children}</li>
-                          ),
-                          strong: ({ children }) => (
-                            <strong className="font-semibold">
-                              {children}
-                            </strong>
-                          ),
-                          em: ({ children }) => (
-                            <em className="italic">{children}</em>
-                          ),
-                        }}
-                      >
+                  <motion.div
+                    whileHover={{ scale: 1.02 }}
+                    className={`max-w-[85%] rounded-2xl px-4 py-3 ${
+                      message.role === "user"
+                        ? "bg-linear-to-br from-indigo-600 via-purple-600 to-pink-600 text-white rounded-br-none shadow-lg shadow-purple-500/30"
+                        : message.isError
+                        ? "bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300 rounded-bl-none border-2 border-red-200 dark:border-red-800"
+                        : "bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-bl-none shadow-lg border border-gray-100 dark:border-gray-700"
+                    }`}
+                  >
+                    {message.role === "user" ? (
+                      <p className="text-sm whitespace-pre-wrap wrap-break-word">
                         {message.content}
-                      </ReactMarkdown>
-                    </div>
-                  )}
-                  {message.isStreaming && (
-                    <span className="inline-block w-2 h-4 bg-gray-400 animate-pulse ml-1"></span>
-                  )}
-                </div>
-              </div>
-            ))}
+                      </p>
+                    ) : (
+                      <div className="text-sm prose prose-sm dark:prose-invert max-w-none">
+                        <ReactMarkdown
+                          components={{
+                            p: ({ children }) => (
+                              <p className="mb-2 last:mb-0">{children}</p>
+                            ),
+                            code: ({ inline, children }) =>
+                              inline ? (
+                                <code className="bg-gray-200 dark:bg-gray-700 px-1 py-0.5 rounded text-xs">
+                                  {children}
+                                </code>
+                              ) : (
+                                <code className="block bg-gray-100 dark:bg-gray-900 p-2 rounded text-xs overflow-x-auto">
+                                  {children}
+                                </code>
+                              ),
+                            ul: ({ children }) => (
+                              <ul className="list-disc ml-4 mb-2">
+                                {children}
+                              </ul>
+                            ),
+                            ol: ({ children }) => (
+                              <ol className="list-decimal ml-4 mb-2">
+                                {children}
+                              </ol>
+                            ),
+                            li: ({ children }) => (
+                              <li className="mb-1">{children}</li>
+                            ),
+                            strong: ({ children }) => (
+                              <strong className="font-semibold">
+                                {children}
+                              </strong>
+                            ),
+                            em: ({ children }) => (
+                              <em className="italic">{children}</em>
+                            ),
+                          }}
+                        >
+                          {message.content}
+                        </ReactMarkdown>
+                      </div>
+                    )}
+                    {message.isStreaming && (
+                      <span className="inline-block w-2 h-4 bg-gray-400 animate-pulse ml-1"></span>
+                    )}
+                  </motion.div>
+                </motion.div>
+              ))}
 
-            {/* Typing Indicator */}
-            {isTyping && !currentBotMessageRef.current && (
-              <div className="flex justify-start">
-                <div className="bg-white dark:bg-gray-800 rounded-2xl rounded-bl-none px-4 py-3 shadow-md">
-                  <div className="flex space-x-2">
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                    <div
-                      className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
-                      style={{ animationDelay: "0.2s" }}
-                    ></div>
-                    <div
-                      className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
-                      style={{ animationDelay: "0.4s" }}
-                    ></div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            <div ref={messagesEndRef} />
-          </div>
-
-          {/* Input Form */}
-          <div className="p-4 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
-            <form onSubmit={handleSendMessage} className="flex space-x-2">
-              <input
-                type="text"
-                value={inputMessage}
-                onChange={(e) => setInputMessage(e.target.value)}
-                placeholder={
-                  isConnected ? "Type your message..." : "Connecting..."
-                }
-                disabled={!isConnected || isTyping}
-                className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600 dark:bg-gray-700 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
-              />
-              <button
-                type="submit"
-                disabled={!inputMessage.trim() || !isConnected || isTyping}
-                className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-xl hover:shadow-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
+              {/* Typing Indicator */}
+              {isTyping && !currentBotMessageRef.current && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="flex justify-start"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+                  <div className="bg-white dark:bg-gray-800 rounded-2xl rounded-bl-none px-5 py-3 shadow-lg border border-gray-100 dark:border-gray-700">
+                    <div className="flex items-center space-x-2">
+                      <Bot className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+                      <div className="flex space-x-1.5">
+                        <motion.div
+                          animate={{ y: [0, -8, 0] }}
+                          transition={{
+                            duration: 0.6,
+                            repeat: Infinity,
+                            delay: 0,
+                          }}
+                          className="w-2 h-2 bg-purple-600 dark:bg-purple-400 rounded-full"
+                        />
+                        <motion.div
+                          animate={{ y: [0, -8, 0] }}
+                          transition={{
+                            duration: 0.6,
+                            repeat: Infinity,
+                            delay: 0.2,
+                          }}
+                          className="w-2 h-2 bg-purple-600 dark:bg-purple-400 rounded-full"
+                        />
+                        <motion.div
+                          animate={{ y: [0, -8, 0] }}
+                          transition={{
+                            duration: 0.6,
+                            repeat: Infinity,
+                            delay: 0.4,
+                          }}
+                          className="w-2 h-2 bg-purple-600 dark:bg-purple-400 rounded-full"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+
+              <div ref={messagesEndRef} />
+            </div>
+
+            {/* Input Form */}
+            <div className="p-4 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-t border-gray-200/50 dark:border-gray-700/50">
+              <form onSubmit={handleSendMessage} className="flex gap-2">
+                <div className="flex-1 relative">
+                  <input
+                    type="text"
+                    value={inputMessage}
+                    onChange={(e) => setInputMessage(e.target.value)}
+                    placeholder={
+                      isConnected ? "Ask me anything..." : "Connecting..."
+                    }
+                    disabled={!isConnected || isTyping}
+                    className="w-full pl-4 pr-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-2xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-700 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm shadow-sm"
                   />
-                </svg>
-              </button>
-            </form>
-          </div>
-        </div>
-      )}
+                </div>
+                <motion.button
+                  type="submit"
+                  disabled={!inputMessage.trim() || !isConnected || isTyping}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="bg-linear-to-br from-indigo-600 via-purple-600 to-pink-600 text-white px-5 py-3 rounded-2xl hover:shadow-lg hover:shadow-purple-500/50 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center shrink-0"
+                >
+                  <Send className="w-5 h-5" />
+                </motion.button>
+              </form>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 text-center">
+                Powered by AI • {isConnected ? "Connected" : "Offline"}
+              </p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 };

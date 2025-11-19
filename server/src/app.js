@@ -45,7 +45,7 @@ const limiter = rateLimit({
 app.use("/api", limiter);
 
 // Health check
-app.get("/", (req, res) => {
+app.get("/health", (req, res) => {
   res.json({ message: "PenPortal API is running", status: "ok" });
 });
 
